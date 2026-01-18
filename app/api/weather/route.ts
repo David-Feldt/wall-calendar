@@ -38,10 +38,18 @@ export async function GET() {
 
     // Map OpenWeatherMap condition codes to our condition types
     const mapCondition = (code: number): "sunny" | "cloudy" | "rainy" | "partly-cloudy" => {
+      // Get current hour in Toronto timezone
+      const torontoHour = new Date().toLocaleString("en-US", { 
+        timeZone: "America/Toronto",
+        hour: "numeric",
+        hour12: false 
+      })
+      const hour = parseInt(torontoHour)
+      
       // Clear sky
       if (code === 800) return "sunny"
       // Clear sky (night)
-      if (code === 800 && new Date().getHours() < 6 || new Date().getHours() > 20) return "sunny"
+      if (code === 800 && (hour < 6 || hour >= 20)) return "sunny"
       // Clouds
       if (code >= 801 && code <= 804) {
         if (code === 801 || code === 802) return "partly-cloudy"
@@ -69,7 +77,10 @@ export async function GET() {
     
     forecastData.list.forEach((item: any) => {
       const date = new Date(item.dt * 1000)
-      const dateKey = date.toLocaleDateString("en-US", { weekday: "short" })
+      const dateKey = date.toLocaleDateString("en-US", { 
+        timeZone: "America/Toronto",
+        weekday: "short" 
+      })
       
       if (!dailyForecast[dateKey]) {
         dailyForecast[dateKey] = {

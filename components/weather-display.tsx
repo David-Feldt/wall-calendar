@@ -2,14 +2,20 @@
 
 import { Wind, Droplets } from "lucide-react"
 import { useEffect, useState } from "react"
+import { getTorontoTime, formatTorontoTime, formatTorontoDate } from "@/lib/timezone"
 
 type TimeOfDay = "morning" | "afternoon" | "evening" | "night"
 
 const getTimeOfDay = (date: Date): TimeOfDay => {
-  const hour = date.getHours()
-  if (hour >= 5 && hour < 12) return "morning"
-  if (hour >= 12 && hour < 17) return "afternoon"
-  if (hour >= 17 && hour < 21) return "evening"
+  // Get hour in Toronto timezone
+  const torontoHour = parseInt(date.toLocaleString("en-US", {
+    timeZone: "America/Toronto",
+    hour: "numeric",
+    hour12: false
+  }))
+  if (torontoHour >= 5 && torontoHour < 12) return "morning"
+  if (torontoHour >= 12 && torontoHour < 17) return "afternoon"
+  if (torontoHour >= 17 && torontoHour < 21) return "evening"
   return "night"
 }
 
@@ -400,15 +406,15 @@ interface WeatherData {
 }
 
 export function WeatherDisplay() {
-  const [currentTime, setCurrentTime] = useState(new Date())
-  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay(new Date()))
+  const [currentTime, setCurrentTime] = useState(getTorontoTime())
+  const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>(getTimeOfDay(getTorontoTime()))
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [location, setLocation] = useState("Thornhill, ON")
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const now = new Date()
+      const now = getTorontoTime()
       setCurrentTime(now)
       setTimeOfDay(getTimeOfDay(now))
     }, 1000)
@@ -448,15 +454,11 @@ export function WeatherDisplay() {
   }
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    })
+    return formatTorontoTime(date)
   }
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
+    return formatTorontoDate(date, {
       weekday: "long",
       month: "long",
       day: "numeric",

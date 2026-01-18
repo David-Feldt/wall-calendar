@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CalendarSettings, getSelectedCalendarIds } from "@/components/calendar-settings"
+import { getTorontoTime, getStartOfDayToronto, isTodayToronto, formatTorontoDate, formatTorontoTime } from "@/lib/timezone"
 
 interface CalendarEvent {
   id: string
@@ -28,18 +29,16 @@ interface GoogleCalendarEvent {
 
 export function WeeklyCalendar() {
   const [currentStart, setCurrentStart] = useState(() => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    return today
+    return getStartOfDayToronto()
   })
 
-  const [today, setToday] = useState(new Date())
+  const [today, setToday] = useState(getTorontoTime())
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const timer = setInterval(() => setToday(new Date()), 60000)
+    const timer = setInterval(() => setToday(getTorontoTime()), 60000)
     return () => clearInterval(timer)
   }, [])
 
@@ -106,11 +105,7 @@ export function WeeklyCalendar() {
       
       if (dayIndex >= 0 && dayIndex < 10) {
         const timeStr = event.start.dateTime
-          ? startDate.toLocaleTimeString("en-US", {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-            })
+          ? formatTorontoTime(startDate)
           : "All day"
 
         // Use actual calendar colors, fallback to defaults
@@ -134,7 +129,8 @@ export function WeeklyCalendar() {
   const forecastDays = Array.from({ length: 10 }, (_, i) => {
     const date = new Date(currentStart)
     date.setDate(date.getDate() + i)
-    return date
+    // Ensure we're working with Toronto timezone dates
+    return new Date(date.toLocaleString("en-US", { timeZone: "America/Toronto" }))
   })
 
   const navigateForecast = (direction: "prev" | "next") => {
@@ -144,9 +140,7 @@ export function WeeklyCalendar() {
   }
 
   const goToToday = () => {
-    const todayDate = new Date()
-    todayDate.setHours(0, 0, 0, 0)
-    setCurrentStart(todayDate)
+    setCurrentStart(getStartOfDayToronto())
   }
 
   const handleLogin = () => {
@@ -160,12 +154,7 @@ export function WeeklyCalendar() {
   }
 
   const isToday = (date: Date) => {
-    const todayDate = new Date()
-    return (
-      date.getDate() === todayDate.getDate() &&
-      date.getMonth() === todayDate.getMonth() &&
-      date.getFullYear() === todayDate.getFullYear()
-    )
+    return isTodayToronto(date)
   }
 
   const getEventsForDay = (dayIndex: number) => {
@@ -177,10 +166,10 @@ export function WeeklyCalendar() {
     const lastDay = forecastDays[9]
 
     if (firstDay.getMonth() === lastDay.getMonth()) {
-      return firstDay.toLocaleDateString("en-US", { month: "long", year: "numeric" })
+      return formatTorontoDate(firstDay, { month: "long", year: "numeric" })
     }
 
-    return `${firstDay.toLocaleDateString("en-US", { month: "short" })} - ${lastDay.toLocaleDateString("en-US", { month: "short", year: "numeric" })}`
+    return `${formatTorontoDate(firstDay, { month: "short" })} - ${formatTorontoDate(lastDay, { month: "short", year: "numeric" })}`
   }
 
   if (!isAuthenticated) {
@@ -264,7 +253,7 @@ export function WeeklyCalendar() {
                     isTodayDate ? "text-[#4285F4]" : "text-muted-foreground"
                   }`}
                 >
-                  {date.toLocaleDateString("en-US", { weekday: "short" })}
+                  {formatTorontoDate(date, { weekday: "short" })}
                 </p>
                 <p
                   className={`text-lg font-light mt-0.5 ${

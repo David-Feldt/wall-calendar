@@ -199,6 +199,73 @@ The project uses:
 - **Tailwind CSS** for styling
 - **shadcn/ui** components built on Radix UI
 
+## Deployment to Vercel
+
+### Prerequisites
+
+1. A GitHub account (or GitLab/Bitbucket)
+2. A Vercel account (free tier works great)
+3. Your Google OAuth credentials
+4. Your OpenWeatherMap API key
+
+### Step-by-Step Deployment
+
+1. **Push your code to GitHub:**
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git remote add origin <your-github-repo-url>
+   git push -u origin main
+   ```
+
+2. **Deploy to Vercel:**
+   - Go to [vercel.com](https://vercel.com) and sign in
+   - Click "Add New Project"
+   - Import your GitHub repository
+   - Vercel will auto-detect Next.js settings
+
+3. **Configure Environment Variables:**
+   In the Vercel project settings, add these environment variables:
+   
+   ```
+   GOOGLE_CLIENT_ID=your_client_id_here
+   GOOGLE_CLIENT_SECRET=your_client_secret_here
+   GOOGLE_REDIRECT_URI=https://your-app.vercel.app/api/auth/google/callback
+   NEXT_PUBLIC_BASE_URL=https://your-app.vercel.app
+   OPENWEATHER_API_KEY=your_openweather_api_key_here
+   ```
+   
+   **Important:** Replace `your-app.vercel.app` with your actual Vercel domain.
+
+4. **Update Google OAuth Redirect URI:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Navigate to APIs & Services > Credentials
+   - Edit your OAuth 2.0 Client ID
+   - Add your Vercel URL to "Authorized redirect URIs":
+     ```
+     https://your-app.vercel.app/api/auth/google/callback
+     ```
+   - Save the changes
+
+5. **Deploy:**
+   - Click "Deploy" in Vercel
+   - Wait for the build to complete
+   - Your app will be live at `https://your-app.vercel.app`
+
+### Post-Deployment
+
+- Your app will automatically deploy on every push to the main branch
+- Environment variables are secure and only accessible server-side
+- HTTPS is automatically configured by Vercel (required for PWA and OAuth)
+
+### Custom Domain (Optional)
+
+1. In Vercel project settings, go to "Domains"
+2. Add your custom domain
+3. Update `GOOGLE_REDIRECT_URI` and `NEXT_PUBLIC_BASE_URL` to use your custom domain
+4. Update the redirect URI in Google Cloud Console
+
 ## License
 
 This project is private.
