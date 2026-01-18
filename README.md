@@ -1,6 +1,6 @@
 # Wall Calendar
 
-A beautiful wall calendar application built with Next.js, featuring Google Calendar integration and real-time weather display for Thornhill, Ontario.
+A beautiful wall calendar application built with Next.js, featuring Google Calendar integration and real-time weather display for Thornhill, Ontario. Optimized for tablet wall displays as a Progressive Web App.
 
 ## Features
 
@@ -8,263 +8,143 @@ A beautiful wall calendar application built with Next.js, featuring Google Calen
 - 📅 **10-Day Forecast View** - Compact 5x2 grid showing your Google Calendar events
 - 🔐 **Google Calendar Integration** - Sign in to sync your real calendar events
 - 🎨 **Calendar Selection** - Choose which calendars to display (primary, birthdays, family, etc.)
-- 🎨 **Modern UI** - Built with Tailwind CSS and shadcn/ui components
 - 🌈 **Color Preservation** - Events maintain their original Google Calendar colors
+- 📱 **Progressive Web App** - Install on your tablet for a native app experience
+- 🕐 **Toronto Timezone** - All times displayed in Toronto timezone (EST/EDT)
 
-## Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js** (v18 or higher)
-- A package manager: **npm**, **yarn**, or **pnpm** (any will work)
-
-## Getting Started
-
-### 1. Set Up Google Calendar API
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
-3. Enable the **Google Calendar API**:
-   - Navigate to "APIs & Services" > "Library"
-   - Search for "Google Calendar API"
-   - Click "Enable"
-4. Create OAuth 2.0 credentials:
-   - Go to "APIs & Services" > "Credentials"
-   - Click "Create Credentials" > "OAuth client ID"
-   - Choose "Web application"
-   - Add authorized redirect URI: `http://localhost:3000/api/auth/google/callback`
-   - Copy your **Client ID** and **Client Secret**
-5. **Add test users** (required for testing):
-   - Go to "APIs & Services" > "OAuth consent screen"
-   - Scroll down to "Test users" section
-   - Click "+ ADD USERS"
-   - Add your email address (e.g., `dsfeldt@gmail.com`)
-   - Click "Add"
-   
-   **Note:** While the app is in testing mode, only added test users can sign in. For production use, you'll need to submit the app for verification.
-
-### 2. Configure Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-GOOGLE_CLIENT_ID=your_client_id_here
-GOOGLE_CLIENT_SECRET=your_client_secret_here
-GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-OPENWEATHER_API_KEY=your_openweather_api_key_here
-```
-
-**Weather API Setup:**
-1. Sign up for a free API key at [OpenWeatherMap](https://openweathermap.org/api)
-2. Add your API key to `.env.local` as `OPENWEATHER_API_KEY`
-3. The weather will automatically show for Thornhill, Ontario
-
-**Important:** 
-- `GOOGLE_REDIRECT_URI` should be the **full redirect URI** including the path: `http://localhost:3000/api/auth/google/callback`
-- This must **exactly match** what you configure in Google Cloud Console under "Authorized redirect URIs"
-- For production, update both `GOOGLE_REDIRECT_URI` and `NEXT_PUBLIC_BASE_URL` to your production URL
-
-### 3. Install Dependencies
-
-Choose your preferred package manager:
-
-**Using npm:**
-```bash
-npm install
-```
-
-**Using yarn:**
-```bash
-yarn install
-```
-
-**Using pnpm:**
-```bash
-pnpm install
-```
-
-### 4. Run Development Server
-
-Start the development server:
-
-**Using npm:**
-```bash
-npm run dev
-```
-
-**Using yarn:**
-```bash
-yarn dev
-```
-
-**Using pnpm:**
-```bash
-pnpm dev
-```
-
-The application will be available at [http://localhost:3000](http://localhost:3000)
-
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
-
-### 5. Build for Production
-
-To create an optimized production build:
-
-**Using npm:**
-```bash
-npm run build
-```
-
-**Using yarn:**
-```bash
-yarn build
-```
-
-**Using pnpm:**
-```bash
-pnpm build
-```
-
-### 6. Start Production Server
-
-After building, start the production server:
-
-**Using npm:**
-```bash
-npm start
-```
-
-**Using yarn:**
-```bash
-yarn start
-```
-
-**Using pnpm:**
-```bash
-pnpm start
-```
-
-## Available Scripts
-
-- `dev` - Start the development server
-- `build` - Build the application for production
-- `start` - Start the production server
-- `lint` - Run ESLint to check for code issues
-
-Replace the command prefix with your package manager (`npm run`, `yarn`, or `pnpm`).
-
-## Project Structure
-
-```
-google-wall-calendar/
-├── app/                    # Next.js app directory
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── ui/               # UI component library (shadcn/ui)
-│   ├── weather-display.tsx
-│   └── weekly-calendar.tsx
-├── hooks/                # Custom React hooks
-├── lib/                  # Utility functions
-└── public/               # Static assets
-```
-
-## Technology Stack
-
-- **Framework**: Next.js 16
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui (Radix UI)
-- **Google Calendar API**: Integrated via googleapis
-- **Package Manager**: npm, yarn, or pnpm (your choice)
-
-## Google Calendar Setup
-
-After starting the app, click "Sign in with Google" to connect your calendar. The app will:
-- Request read-only access to your calendar
-- Display your events in the weekly view
-- Automatically refresh when you navigate between weeks
-
-Your authentication is stored securely in HTTP-only cookies and persists across sessions.
-
-## Development
-
-The project uses:
-
-- **Next.js 16** with App Router
-- **React 19**
-- **TypeScript** for type safety
-- **Tailwind CSS** for styling
-- **shadcn/ui** components built on Radix UI
-
-## Deployment to Vercel
+## Quick Start
 
 ### Prerequisites
 
-1. A GitHub account (or GitLab/Bitbucket)
-2. A Vercel account (free tier works great)
-3. Your Google OAuth credentials
-4. Your OpenWeatherMap API key
+- Node.js (v18 or higher)
+- npm, yarn, or pnpm
+- Google Cloud account (for Calendar API)
+- OpenWeatherMap account (free API key)
 
-### Step-by-Step Deployment
+### Installation
 
-1. **Push your code to GitHub:**
+1. **Clone and install:**
+   ```bash
+   npm install
+   ```
+
+2. **Set up Google Calendar API:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a project and enable **Google Calendar API**
+   - Create OAuth 2.0 credentials (Web application)
+   - Add redirect URI: `http://localhost:3000/api/auth/google/callback`
+   - Add yourself as a test user in OAuth consent screen
+
+3. **Get OpenWeatherMap API key:**
+   - Sign up at [OpenWeatherMap](https://openweathermap.org/api)
+   - Get your free API key
+
+4. **Configure environment variables:**
+   Create `.env.local`:
+   ```env
+   GOOGLE_CLIENT_ID=your_client_id_here
+   GOOGLE_CLIENT_SECRET=your_client_secret_here
+   GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+   NEXT_PUBLIC_BASE_URL=http://localhost:3000
+   OPENWEATHER_API_KEY=your_openweather_api_key_here
+   ```
+
+5. **Run development server:**
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Installing as PWA
+
+### iOS (iPad)
+1. Open Safari and navigate to the app
+2. Tap Share → "Add to Home Screen"
+3. App appears as standalone app
+
+### Android
+1. Open Chrome and navigate to the app
+2. Tap menu → "Install App" or "Add to Home Screen"
+3. App installs and appears in app drawer
+
+**PWA Features:**
+- ✅ Works offline (cached pages)
+- ✅ Standalone mode (no browser UI)
+- ✅ Landscape orientation optimized
+- ✅ Auto-updates on deployment
+
+## Deployment to Vercel
+
+1. **Push to GitHub:**
    ```bash
    git init
    git add .
    git commit -m "Initial commit"
-   git remote add origin <your-github-repo-url>
+   git remote add origin <your-repo-url>
    git push -u origin main
    ```
 
-2. **Deploy to Vercel:**
-   - Go to [vercel.com](https://vercel.com) and sign in
-   - Click "Add New Project"
+2. **Deploy on Vercel:**
+   - Go to [vercel.com/new](https://vercel.com/new)
    - Import your GitHub repository
-   - Vercel will auto-detect Next.js settings
+   - Add environment variables (see below)
+   - Deploy
 
-3. **Configure Environment Variables:**
-   In the Vercel project settings, add these environment variables:
-   
+3. **Environment Variables (Vercel):**
    ```
-   GOOGLE_CLIENT_ID=your_client_id_here
-   GOOGLE_CLIENT_SECRET=your_client_secret_here
+   GOOGLE_CLIENT_ID=your_client_id
+   GOOGLE_CLIENT_SECRET=your_client_secret
    GOOGLE_REDIRECT_URI=https://your-app.vercel.app/api/auth/google/callback
    NEXT_PUBLIC_BASE_URL=https://your-app.vercel.app
-   OPENWEATHER_API_KEY=your_openweather_api_key_here
+   OPENWEATHER_API_KEY=your_api_key
    ```
-   
-   **Important:** Replace `your-app.vercel.app` with your actual Vercel domain.
 
-4. **Update Google OAuth Redirect URI:**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Navigate to APIs & Services > Credentials
-   - Edit your OAuth 2.0 Client ID
-   - Add your Vercel URL to "Authorized redirect URIs":
-     ```
-     https://your-app.vercel.app/api/auth/google/callback
-     ```
-   - Save the changes
+4. **Update Google Cloud Console:**
+   - Add `https://your-app.vercel.app/api/auth/google/callback` to authorized redirect URIs
+   - Redeploy on Vercel
 
-5. **Deploy:**
-   - Click "Deploy" in Vercel
-   - Wait for the build to complete
-   - Your app will be live at `https://your-app.vercel.app`
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
-### Post-Deployment
+## Project Structure
 
-- Your app will automatically deploy on every push to the main branch
-- Environment variables are secure and only accessible server-side
-- HTTPS is automatically configured by Vercel (required for PWA and OAuth)
+```
+wall-calendar/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes (auth, calendar, weather)
+│   ├── globals.css        # Global styles
+│   ├── layout.tsx         # Root layout with PWA config
+│   └── page.tsx           # Home page
+├── components/            # React components
+│   ├── ui/               # UI component library
+│   ├── calendar-settings.tsx
+│   ├── pwa-install.tsx
+│   ├── weather-display.tsx
+│   └── weekly-calendar.tsx
+├── lib/                  # Utilities
+│   ├── timezone.ts       # Toronto timezone helpers
+│   └── utils.ts
+├── public/               # Static assets
+│   ├── manifest.json     # PWA manifest
+│   └── sw.js            # Service worker
+└── hooks/               # Custom React hooks
+```
 
-### Custom Domain (Optional)
+## Technology Stack
 
-1. In Vercel project settings, go to "Domains"
-2. Add your custom domain
-3. Update `GOOGLE_REDIRECT_URI` and `NEXT_PUBLIC_BASE_URL` to use your custom domain
-4. Update the redirect URI in Google Cloud Console
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui (Radix UI)
+- **APIs**: Google Calendar API, OpenWeatherMap API
+- **PWA**: Service Worker, Web App Manifest
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
 
 ## License
 
