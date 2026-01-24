@@ -71,7 +71,7 @@ A beautiful wall calendar application built with Next.js, featuring Google Calen
 **PWA Features:**
 - ✅ Works offline (cached pages)
 - ✅ Standalone mode (no browser UI)
-- ✅ Landscape orientation optimized
+- ✅ Portrait orientation optimized
 - ✅ Auto-updates on deployment
 
 ## Deployment to Vercel

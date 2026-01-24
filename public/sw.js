@@ -1,5 +1,5 @@
 // Service Worker for Wall Calendar PWA
-const CACHE_NAME = 'wall-calendar-v1'
+const CACHE_NAME = 'wall-calendar-v2'
 const urlsToCache = [
   '/',
   '/manifest.json',
@@ -45,6 +45,11 @@ self.addEventListener('fetch', (event) => {
   // Don't cache API routes (they need fresh data)
   if (event.request.url.includes('/api/')) {
     return
+  }
+
+  // Always fetch manifest.json fresh (don't cache)
+  if (event.request.url.includes('/manifest.json')) {
+    return fetch(event.request)
   }
 
   event.respondWith(

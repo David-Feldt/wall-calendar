@@ -282,9 +282,9 @@ export function WeeklyCalendar() {
                         color: event.foregroundColor,
                       }}
                     >
-                      <p className="font-medium truncate">{event.title}</p>
+                    <p className="font-medium truncate">{event.title}</p>
                       <p className="opacity-80 text-[9px]">{event.time}</p>
-                    </div>
+                  </div>
                   ))
                 )}
               </div>
