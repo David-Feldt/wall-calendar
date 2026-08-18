@@ -1,6 +1,6 @@
 # Wall Calendar
 
-A portrait-oriented, self-hosted calendar display for a wall-mounted tablet. It combines selected Google Calendars with current weather for Thornhill, Ontario in an installable Next.js PWA.
+A portrait-oriented, self-hosted calendar display for a wall-mounted tablet. It combines selected Google Calendars with local weather in an installable Next.js PWA.
 
 <p align="center">
   <img src="docs/wall-calendar.jpg" alt="Wall Calendar running on a wall-mounted tablet" width="360">
@@ -11,7 +11,7 @@ A portrait-oriented, self-hosted calendar display for a wall-mounted tablet. It 
 - View a navigable 10-day calendar at a glance.
 - Connect Google Calendar and choose exactly which calendars to show.
 - Keep each event's Google Calendar color, including all-day events.
-- See current weather conditions for Thornhill, Ontario.
+- See current local weather conditions.
 - Install the app in standalone mode on a portrait-oriented tablet.
 - Display every date and time in the Toronto time zone.
 
