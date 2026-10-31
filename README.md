@@ -68,6 +68,37 @@ Deploy to Vercel or another Node.js-compatible host. Set the environment variabl
 
 For the full Vercel walkthrough, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
+## TRMNL E-ink Display
+
+The app serves an 800×480 black-and-white calendar image for a [TRMNL](https://trmnl.com) OG,
+shown with TRMNL's free **Alias** plugin (the device downloads the image straight from this app).
+
+```
+GET /api/trmnl/image?key=<TRMNL_KEY>           # 1-bit PNG (all firmware)
+GET /api/trmnl/image?key=<TRMNL_KEY>&bits=2    # 4-gray PNG (firmware 1.6+)
+GET /api/trmnl/image?key=<TRMNL_KEY>&demo=1    # sample events, for previewing the layout
+```
+
+### Setup
+
+1. **Pick a secret** and add it to Vercel as `TRMNL_KEY` (e.g. `openssl rand -hex 16`).
+2. **Keep the Google token alive:** in Google Cloud Console → OAuth consent screen, set the
+   publishing status to **In production**. In "Testing" mode, refresh tokens expire after 7 days
+   and the display silently stops updating.
+3. **Get a refresh token:** deploy, sign out of the wall calendar and sign back in with Google,
+   then open `https://your-app.vercel.app/api/trmnl/setup?key=<TRMNL_KEY>`. Copy
+   `GOOGLE_REFRESH_TOKEN` into Vercel's environment variables.
+4. *(Optional)* Set `TRMNL_CALENDAR_IDS` to a comma-separated list of calendar IDs from the setup
+   page. If unset, every calendar checked in Google Calendar is shown.
+5. **Redeploy**, then open the image URL in a browser to check it.
+6. **On trmnl.com:** add the **Alias** plugin, paste the image URL, and add it to your device's playlist.
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `TRMNL_KEY` | Yes | Shared secret for the `/api/trmnl/*` endpoints |
+| `GOOGLE_REFRESH_TOKEN` | Yes | Lets the server read your calendar without a browser session |
+| `TRMNL_CALENDAR_IDS` | No | Comma-separated calendar IDs to show |
+
 ## Commands
 
 | Command | Description |
