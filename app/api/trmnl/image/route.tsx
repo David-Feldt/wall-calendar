@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     }
   )
 
-  const png = await toTrmnlPng(Buffer.from(await image.arrayBuffer()), WIDTH, HEIGHT, bits)
+  const png = toTrmnlPng(Buffer.from(await image.arrayBuffer()), WIDTH, HEIGHT, bits)
 
   return new NextResponse(new Uint8Array(png), {
     headers: {
