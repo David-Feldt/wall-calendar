@@ -4,6 +4,29 @@ const LON = "-79.38"
 
 export type WeatherCondition = "sunny" | "cloudy" | "rainy" | "partly-cloudy"
 
+/** Finer-grained condition used for icons (e.g. on the TRMNL e-ink display). */
+export type WeatherIcon =
+  | "clear"
+  | "clear-night"
+  | "partly-cloudy"
+  | "partly-cloudy-night"
+  | "cloudy"
+  | "rain"
+  | "storm"
+  | "snow"
+  | "fog"
+
+/** Map an OpenWeatherMap condition code (https://openweathermap.org/weather-conditions) to an icon. */
+export function iconForCode(code: number, night = false): WeatherIcon {
+  if (code >= 200 && code < 300) return "storm"
+  if (code >= 300 && code < 600) return "rain"
+  if (code >= 600 && code < 700) return "snow"
+  if (code >= 700 && code < 800) return "fog"
+  if (code === 800) return night ? "clear-night" : "clear"
+  if (code === 801 || code === 802) return night ? "partly-cloudy-night" : "partly-cloudy"
+  return "cloudy"
+}
+
 export interface WeatherData {
   current: {
     temp: number
@@ -13,13 +36,14 @@ export interface WeatherData {
     humidity: number
     windSpeed: number
     description: string
+    icon: WeatherIcon
   }
-  forecast: { day: string; temp: number; high: number; low: number; condition: string }[]
+  forecast: { day: string; temp: number; high: number; low: number; condition: string; icon: WeatherIcon }[]
   location: string
 }
 
-/** Fetch current weather + 4-day forecast for Thornhill, ON. Throws on failure. */
-export async function getWeather(): Promise<WeatherData> {
+/** Fetch current weather + daily forecast (default 4 days, today first) for Thornhill, ON. Throws on failure. */
+export async function getWeather(forecastDays = 4): Promise<WeatherData> {
   if (!WEATHER_API_KEY) {
     throw new Error("Weather API key not configured")
   }
@@ -80,11 +104,19 @@ export async function getWeather(): Promise<WeatherData> {
     humidity: currentData.main.humidity,
     windSpeed: Math.round(currentData.wind?.speed * 3.6 || 0), // Convert m/s to km/h
     description: currentData.weather[0].main,
+    icon: iconForCode(
+      currentData.weather[0].id,
+      currentData.dt < currentData.sys?.sunrise || currentData.dt > currentData.sys?.sunset
+    ),
   }
 
   // Process forecast (get daily highs/lows from 3-hourly data)
-  const dailyForecast: Record<string, { high: number; low: number; condition: string }> = {}
-  
+  // The icon uses the reading closest to 1pm, so it reflects daytime weather.
+  const dailyForecast: Record<
+    string,
+    { high: number; low: number; condition: string; iconCode: number; iconHourDistance: number }
+  > = {}
+
   forecastData.list.forEach((item: any) => {
     const date = new Date(item.dt * 1000)
     const dateKey = date.toLocaleDateString("en-US", { 
@@ -92,26 +124,37 @@ export async function getWeather(): Promise<WeatherData> {
       weekday: "short" 
     })
     
+    const hour = parseInt(date.toLocaleString("en-US", { timeZone: "America/Toronto", hour: "numeric", hour12: false }))
+    const hourDistance = Math.abs((hour % 24) - 13)
+
     if (!dailyForecast[dateKey]) {
       dailyForecast[dateKey] = {
         high: Math.round(item.main.temp_max),
         low: Math.round(item.main.temp_min),
         condition: mapCondition(item.weather[0].id),
+        iconCode: item.weather[0].id,
+        iconHourDistance: hourDistance,
       }
     } else {
-      dailyForecast[dateKey].high = Math.max(dailyForecast[dateKey].high, Math.round(item.main.temp_max))
-      dailyForecast[dateKey].low = Math.min(dailyForecast[dateKey].low, Math.round(item.main.temp_min))
+      const day = dailyForecast[dateKey]
+      day.high = Math.max(day.high, Math.round(item.main.temp_max))
+      day.low = Math.min(day.low, Math.round(item.main.temp_min))
+      if (hourDistance < day.iconHourDistance) {
+        day.iconCode = item.weather[0].id
+        day.iconHourDistance = hourDistance
+      }
     }
   })
 
   const forecast = Object.entries(dailyForecast)
-    .slice(0, 4)
+    .slice(0, forecastDays)
     .map(([day, data]) => ({
       day,
       temp: data.high, // Use high as display temp
       high: data.high,
       low: data.low,
       condition: data.condition,
+      icon: iconForCode(data.iconCode),
     }))
 
   return {

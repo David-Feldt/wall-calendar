@@ -4,6 +4,7 @@ import { isAuthorized } from "@/lib/trmnl/auth"
 import { getCalendarDays, type CalendarDay, type DayEvent } from "@/lib/trmnl/calendar"
 import { toTrmnlPng } from "@/lib/trmnl/png"
 import { getWeather, type WeatherData } from "@/lib/weather"
+import { ALL_WEATHER_ICONS, WeatherIcon } from "@/lib/trmnl/weather-icons"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -40,12 +41,26 @@ export async function GET(request: NextRequest) {
         return { ok: false as const, message: error.message }
       }
     ),
-    getWeather().catch((error) => {
+    getWeather(NUM_DAYS).catch((error) => {
       console.error("TRMNL: weather error", error)
       return null
     }),
     loadFonts(),
   ])
+
+  if (demo && weatherResult) {
+    // Cycle through icons so the whole set can be previewed
+    weatherResult.current.icon = ALL_WEATHER_ICONS[new Date().getMinutes() % ALL_WEATHER_ICONS.length]
+    const demoDayList = demoDays()
+    weatherResult.forecast = demoDayList.map((d, i) => ({
+      day: d.weekday,
+      temp: 10 + i,
+      high: 10 + i,
+      low: 2 + i,
+      condition: "partly-cloudy",
+      icon: ALL_WEATHER_ICONS[(i + 1) % ALL_WEATHER_ICONS.length],
+    }))
+  }
 
   const image = new ImageResponse(
     <Screen days={daysResult.ok ? daysResult.days : null} error={daysResult.ok ? null : daysResult.message} weather={weatherResult} />,
@@ -111,6 +126,9 @@ function Screen({ days, error, weather }: { days: CalendarDay[] | null; error: s
         <div style={{ display: "flex", alignItems: "center" }}>
           {weather ? (
             <div style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ display: "flex", marginRight: 12 }}>
+                <WeatherIcon icon={weather.current.icon} size={54} strokeWidth={2} />
+              </div>
               <div style={{ fontSize: 50, fontWeight: 700, lineHeight: 1 }}>{`${weather.current.temp}°`}</div>
               <div style={{ display: "flex", flexDirection: "column", marginLeft: 12 }}>
                 <div style={{ fontSize: 20, fontWeight: 700 }}>{weather.current.description}</div>
@@ -174,6 +192,11 @@ function DayColumn({ day, weather, last }: { day: CalendarDay; weather: WeatherD
           <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: 1 }}>{day.weekday.toUpperCase()}</div>
           <div style={{ fontSize: 26, fontWeight: 700, lineHeight: 1 }}>{String(day.dayOfMonth)}</div>
         </div>
+        {forecast && (
+          <div style={{ display: "flex" }}>
+            <WeatherIcon icon={forecast.icon} size={30} color={day.isToday ? "#fff" : "#000"} strokeWidth={2.25} />
+          </div>
+        )}
         {forecast && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", fontSize: 14 }}>
             <div style={{ fontWeight: 700 }}>{`${forecast.high}°`}</div>
