@@ -47,6 +47,8 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 OPENWEATHER_API_KEY=your_openweather_api_key
+WEATHER_LAT=43.65
+WEATHER_LON=-79.38
 ```
 
 ### 4. Start the app

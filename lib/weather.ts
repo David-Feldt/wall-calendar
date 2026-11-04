@@ -1,6 +1,6 @@
 const WEATHER_API_KEY = process.env.OPENWEATHER_API_KEY
-const LAT = "43.65"
-const LON = "-79.38"
+const LAT = process.env.WEATHER_LAT
+const LON = process.env.WEATHER_LON
 
 export type WeatherCondition = "sunny" | "cloudy" | "rainy" | "partly-cloudy"
 
@@ -42,10 +42,13 @@ export interface WeatherData {
   location: string
 }
 
-/** Fetch current weather + daily forecast (default 4 days, today first) for Thornhill, ON. Throws on failure. */
+/** Fetch current weather + daily forecast (default 4 days, today first) for the configured location. Throws on failure. */
 export async function getWeather(forecastDays = 4): Promise<WeatherData> {
   if (!WEATHER_API_KEY) {
     throw new Error("Weather API key not configured")
+  }
+  if (!LAT || !LON) {
+    throw new Error("Weather location not configured (set WEATHER_LAT and WEATHER_LON)")
   }
 
   // Fetch current weather

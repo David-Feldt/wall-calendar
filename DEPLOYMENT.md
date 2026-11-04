@@ -24,6 +24,8 @@
    | `GOOGLE_REDIRECT_URI` | Full redirect URI | `https://your-app.vercel.app/api/auth/google/callback` |
    | `NEXT_PUBLIC_BASE_URL` | Your Vercel app URL | `https://your-app.vercel.app` |
    | `OPENWEATHER_API_KEY` | OpenWeatherMap API key | `abc123...` |
+   | `WEATHER_LAT` | Latitude for the weather forecast | `43.65` |
+   | `WEATHER_LON` | Longitude for the weather forecast | `-79.38` |
 
 4. **Update Google Cloud Console**
    - Go to [Google Cloud Console](https://console.cloud.google.com/)
@@ -60,5 +62,5 @@
 - Check for extra spaces when copying/pasting
 
 **Weather not showing:**
-- Verify `OPENWEATHER_API_KEY` is set correctly
+- Verify `OPENWEATHER_API_KEY`, `WEATHER_LAT` and `WEATHER_LON` are set correctly
 - Check Vercel function logs for API errors
